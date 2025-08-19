@@ -1,9 +1,9 @@
 import * as bcrypt from 'bcrypt';
 import { prisma } from "../database/index.js";
-import { User } from "../interfaces/auth-interfaces.js";
+import { UserRegister } from "../interfaces/auth-interfaces.js";
 
 class UserModel {
-    register = async (user: User) => {
+    register = async (user: UserRegister) => {
         if (!user) return null;
 
         const newUser = await prisma.users.create({
