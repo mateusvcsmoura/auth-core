@@ -13,11 +13,13 @@
   "description": "API REST to manage auth services",
   "type": "module",
   "dependencies": {
+    "@prisma/client": "^6.14.0",
     "express": "^5.1.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.3.0",
+    "prisma": "^6.14.0",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2"
   }
