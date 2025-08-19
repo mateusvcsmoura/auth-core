@@ -13,9 +13,10 @@ class AdminController {
 
         try {
             const validatedData = createRoleSchema.parse(req.body);
-            const newRole = await adminModel.createRole(validatedData.name, validatedData.description);
+            const existingRole = await adminModel.getRoleByName(validatedData.name);
+            if (existingRole) throw new HttpError(409, "Role already exists");
 
-            if (!newRole) throw new HttpError(409, "Role already exists");
+            const newRole = await adminModel.createRole(validatedData.name, validatedData.description);
 
             return res.status(201).json(newRole);
         } catch (e) {

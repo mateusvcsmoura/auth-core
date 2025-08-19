@@ -1,5 +1,4 @@
 import { prisma } from "../database/index.js"
-import { HttpError } from "../errors/HttpError.js";
 
 export class AdminModel {
     createRole = async (roleName: string, roleDescription?: string) => {
@@ -18,6 +17,14 @@ export class AdminModel {
         if (!newRole) return null;
 
         return newRole;
+    }
+
+    getRoleByName = async (roleName: string) => {
+        const existingRole = await prisma.roles.findUnique({
+            where: { name: roleName },
+        });
+
+        return existingRole ? true : false;
     }
 };
 
