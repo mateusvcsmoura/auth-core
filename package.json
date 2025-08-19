@@ -1,0 +1,24 @@
+{
+  "name": "auth-core",
+  "version": "1.0.0",
+  "main": "build/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node build/server.js"
+  },
+  "keywords": [],
+  "author": "mateusvcsmoura",
+  "license": "ISC",
+  "description": "API REST to manage auth services",
+  "type": "module",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  }
+}
