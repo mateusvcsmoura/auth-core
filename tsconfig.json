@@ -6,7 +6,7 @@
         "lib": [
             "ESNext"
         ],
-        "target": "esnext",
+        "target": "es2022",
         "module": "nodenext",
         "moduleResolution": "nodenext",
         "rootDir": "src",
