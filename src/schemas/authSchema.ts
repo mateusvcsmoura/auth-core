@@ -16,5 +16,11 @@ export const registerUserSchema = z.object({
         regex(/[!@#$%^&*]/, { error: "Password must have at least one valid special character" })
 });
 
+export const loginUserSchema = z.object({
+    email: z.email({ error: "E-mail format is not valid" }),
+    password: z.string().min(8, { error: "Password must have 8 characters" })
+});
+
 export type TCreateRole = z.infer<typeof createRoleSchema>;
 export type TRegisterUser = z.infer<typeof registerUserSchema>;
+export type TLoginUser = z.infer<typeof loginUserSchema>;
