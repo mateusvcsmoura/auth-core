@@ -47,6 +47,18 @@ class UserController {
             next(e);
         }
     }
+
+    deleteAccount: Handler = async (req, res, next: NextFunction) => {
+        if (!req.user) throw new HttpError(401, "Authorization required");
+
+        try {
+            const deletedUser = await userModel.deleteAccount(req.user); // delete current user account
+
+            return res.status(200).json(deletedUser);
+        } catch (e) {
+            next(e);
+        }
+    }
 };
 
 export { UserController };

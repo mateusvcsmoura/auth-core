@@ -77,6 +77,29 @@ class UserModel {
         return updatedUser;
     }
 
+    deleteAccount = async (userPayload: CustomJwtPayload) => {
+        try {
+            const deletedUser = await prisma.users.delete({
+                where: { id: userPayload.id },
+                select: {
+                    id: true,
+                    email: true,
+                    name: true,
+                }
+            });
+
+            return deletedUser;
+        } catch (e) {
+            if (typeof e === 'object' && e !== null && 'code' in e) {
+                if ((e as { code: string }).code === 'P2025') { // error code from prisma
+                    throw new HttpError(404, "User not found");
+                }
+            }
+
+            throw new HttpError(500, "Could not delete user");
+        }
+    }
+
     getUserByEmail = async (email: string) => {
         const user = await prisma.users.findUnique({
             where: { email: email },
