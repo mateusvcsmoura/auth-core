@@ -24,14 +24,14 @@ class UserModel {
 
         if (!newUser) return null;
 
-        return newUser;
+        return { ...newUser, password: undefined };
     }
 
     login = async (userData: UserLogin) => {
         const user = await this.getUserByEmail(userData.email);
         if (!user) throw new HttpError(404, "User not found");
 
-        const passwordMatch = bcrypt.compareSync(userData.password, user.password)
+        const passwordMatch = bcrypt.compareSync(userData.password, user.password);
         if (!passwordMatch) throw new HttpError(400, "Invalid Credentials");
 
         const payload = { id: user.id, email: user.email, name: user.name, role: user.role.name };
@@ -44,6 +44,23 @@ class UserModel {
         });
 
         return token;
+    }
+
+    changePassword = async (userInfo: ChangeUserPassword) => {
+        const user = await this.getUserById(userInfo.id);
+        if (!user) throw new HttpError(404, "User not found");
+
+        const passwordMatch = bcrypt.compareSync(userInfo.oldPassword, user.password);
+        if (!passwordMatch) throw new HttpError(400, "Incorrect Password");
+
+        const hashedNewPassword = bcrypt.hashSync(userInfo.newPassword, 10);
+
+        const updatedUser = await prisma.users.update({
+            data: { password: hashedNewPassword }, // save hashed password in database
+            where: { id: user.id }
+        });
+
+        return { ...updatedUser, password: undefined };
     }
 
     getUserByEmail = async (email: string) => {
