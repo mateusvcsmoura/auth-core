@@ -42,6 +42,16 @@ const middlewares = {
         } else {
             throw new HttpError(401, "Unauthorized User");
         }
+    },
+
+    ensureMaster: async function (req: Request, res: Response, next: NextFunction) {
+        if (!req.user) throw new HttpError(401, "Authorization required");
+
+        if (req.user.roleName === "Master") {
+            next();
+        } else {
+            throw new HttpError(401, "Unauthorized User");
+        }
     }
 };
 
