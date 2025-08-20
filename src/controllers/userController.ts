@@ -11,9 +11,6 @@ class UserController {
         try {
             const validatedData = registerUserSchema.parse(req.body);
 
-            const existingUser = await userModel.userExists(validatedData.email);
-            if (existingUser) throw new HttpError(409, "E-mail already in use");
-
             const newUser = await userModel.register(validatedData);
             if (!newUser) throw new HttpError(500, "Could not create user");
 
@@ -28,18 +25,9 @@ class UserController {
 
         try {
             const validatedData = loginUserSchema.parse(req.body);
+            const token = await userModel.login(validatedData);
 
-            const existingUser = userModel.userExists(validatedData.email);
-            if (!existingUser) throw new HttpError(404, "User does not exist");
-
-            const result = await userModel.login(validatedData);
-
-            if (!result.success) {
-                if (result.reason === "USER_NOT_FOUND") throw new HttpError(404, "User does not exist");
-                if (result.reason === "INVALID_PASSWORD") throw new HttpError(401, "Invalid Password");
-            }
-
-            return res.status(200).json({ token: result.token });
+            return res.status(200).json({ token });
         } catch (e) {
             next(e);
         }
