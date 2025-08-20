@@ -21,6 +21,17 @@ class AdminController {
             next(e);
         }
     }
+
+    // GET /api/auth/admin/dashboard/users
+    getUsers: Handler = async (req, res, next: NextFunction) => {
+        try {
+            const users = await adminModel.getAllUsers();
+
+            return res.status(200).json(users);
+        } catch (e) {
+            next(e);
+        }
+    }
 }
 
 export { AdminController };

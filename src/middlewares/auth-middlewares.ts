@@ -4,6 +4,7 @@ import { HttpError } from '../errors/HttpError.js';
 import { CustomJwtPayload } from '../interfaces/auth-interfaces.js';
 import { UserModel } from '../models/userModel.js';
 import { JWT_SECRET } from '../config/index.js';
+import { Staff } from '../interfaces/auth-interfaces.js';
 
 const middlewares = {
     ensureAuth: async function (req: Request, res: Response, next: NextFunction) {
@@ -30,6 +31,16 @@ const middlewares = {
             }
 
             throw e;
+        }
+    },
+
+    ensureAdmin: async function (req: Request, res: Response, next: NextFunction) {
+        if (!req.user) throw new HttpError(401, "Authorization required");
+
+        if (req.user.roleName in Staff) {
+            next();
+        } else {
+            throw new HttpError(401, "Unauthorized User");
         }
     }
 };

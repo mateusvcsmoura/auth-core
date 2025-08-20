@@ -20,5 +20,13 @@ export class AdminModel {
 
         return existingRole ? true : false;
     }
+
+    getAllUsers = async () => {
+        const users = await prisma.users.findMany({
+            select: { id: true, name: true, email: true, createdAt: true, updatedAt: true, role: true }
+        });
+
+        return users;
+    }
 };
 

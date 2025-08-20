@@ -24,3 +24,7 @@ export interface CustomJwtPayload extends JwtPayload {
     roleName: string
 }
 
+export enum Staff {
+    Admin,
+    Master
+}
