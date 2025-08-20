@@ -1,16 +1,15 @@
-import * as bcrypt from 'bcrypt';
 import { prisma } from "../database/index.js";
-import { ChangeUserPassword, UserLogin, UserRegister } from "../interfaces/auth-interfaces.js";
-import jwt from 'jsonwebtoken';
-import { config } from 'dotenv';
+import { ChangeUserPassword, CustomJwtPayload, UserLogin, UserRegister } from "../interfaces/auth-interfaces.js";
 import { HttpError } from '../errors/HttpError.js';
-config();
+import { JWT_SECRET } from '../config/index.js';
+import * as bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 class UserModel {
     register = async (user: UserRegister) => {
         if (!user) return null;
 
-        const existingUser = await this.userExists(user.email);
+        const existingUser = await this.getUserByEmail(user.email);
         if (existingUser) throw new HttpError(409, "E-mail already in use");
 
         const newUser = await prisma.users.create({
@@ -19,12 +18,20 @@ class UserModel {
                 name: user.name,
                 password: bcrypt.hashSync(user.password, 10),
                 roleId: 5 // standard user
+            },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                createdAt: true,
+                updatedAt: true,
+                roleId: true,
             }
         });
 
         if (!newUser) return null;
 
-        return { ...newUser, password: undefined };
+        return newUser;
     }
 
     login = async (userData: UserLogin) => {
@@ -35,8 +42,7 @@ class UserModel {
         if (!passwordMatch) throw new HttpError(400, "Invalid Credentials");
 
         const payload = { id: user.id, email: user.email, name: user.name, role: user.role.name };
-        const secret = process.env.JWT_SECRET!;
-        if (!secret) throw new Error("JWT_SECRET is not defined");
+        const secret = JWT_SECRET;
 
         const token = jwt.sign(payload, secret, {
             expiresIn: '1h',
@@ -57,10 +63,18 @@ class UserModel {
 
         const updatedUser = await prisma.users.update({
             data: { password: hashedNewPassword }, // save hashed password in database
-            where: { id: user.id }
+            where: { id: user.id },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                createdAt: true,
+                updatedAt: true,
+                roleId: true,
+            }
         });
 
-        return { ...updatedUser, password: undefined };
+        return updatedUser;
     }
 
     getUserByEmail = async (email: string) => {
@@ -81,10 +95,14 @@ class UserModel {
         return user;
     }
 
-    userExists = async (email: string) => {
-        const userExists = await this.getUserByEmail(email);
+    getUserAsPayload = async (userId: number): Promise<CustomJwtPayload> => {
+        const user = await this.getUserById(userId);
+        if (!user) throw new HttpError(404, "User not found");
 
-        return !!userExists;
+        const { name, email, id, role: { name: roleName } } = user;
+        const userPayload = { name, email, id, roleName };
+
+        return userPayload;
     }
 };
 
