@@ -31,7 +31,13 @@ export const changeUserPasswordSchema = z.object({
         regex(/[!@#$%^&*]/, { error: "Password must have at least one valid special character" })
 });
 
+export const updateUserRoleSchema = z.object({
+    userId: z.int({ error: "Must be an integer number" }),
+    newRole: z.literal(["Standard", "Admin"])
+});
+
 export type TCreateRole = z.infer<typeof createRoleSchema>;
 export type TRegisterUser = z.infer<typeof registerUserSchema>;
 export type TLoginUser = z.infer<typeof loginUserSchema>;
 export type TChangeUserPassword = z.infer<typeof changeUserPasswordSchema>;
+export type TUpdateUserRole = z.infer<typeof updateUserRoleSchema>;

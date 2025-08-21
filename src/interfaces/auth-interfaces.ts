@@ -28,3 +28,5 @@ export enum Staff {
     Admin,
     Master
 }
+
+export type UserRole = "Standard" | "Admin";

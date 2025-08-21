@@ -7,5 +7,6 @@ const adminController = new AdminController();
 
 adminRouter.post('/create-role', adminController.createRole);
 adminRouter.get('/dashboard/users', middlewares.ensureAuth, middlewares.ensureAdmin, adminController.getUsers);
+adminRouter.post('/dashboard/update-user-role', middlewares.ensureAuth, middlewares.ensureMaster, adminController.updateUserRole);
 
 export { adminRouter };
