@@ -1,6 +1,6 @@
 import { prisma } from "../database/index.js"
 import { HttpError } from "../errors/HttpError.js";
-import { UserRole } from "../interfaces/auth-interfaces.js";
+import { Staff, UserRole } from "../interfaces/auth-interfaces.js";
 export class AdminModel {
     createRole = async (roleName: string, roleDescription?: string) => {
         if (!roleName) return null;
@@ -54,7 +54,18 @@ export class AdminModel {
         return updatedUser;
     }
 
-    deleteMember = async () => { }
+    deleteMember = async (userId: number) => {
+        const user = await this.getMemberById(userId);
+        if (!user) throw new HttpError(404, "User not found");
+        if (user.role.name in Staff) throw new HttpError(401, "Cannot delete a staff member. Demote it first.");
+
+        const deletedUser = await prisma.users.delete({
+            where: { id: userId },
+            select: { name: true, email: true, createdAt: true, id: true, role: true, roleId: true, updatedAt: true }
+        });
+
+        return deletedUser;
+    }
 
     getMemberById = async (userId: number) => {
         const user = await prisma.users.findUnique({

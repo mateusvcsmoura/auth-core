@@ -43,6 +43,20 @@ class AdminController {
             next(e);
         }
     }
+
+    // DELETE /api/admin/dashboard/delete-user
+    deleteUser: Handler = async (req, res, next: NextFunction) => {
+        if (!req.params) throw new HttpError(400, "No req params");
+
+        try {
+            const userId = Number(req.params.userId);
+            const deletedUser = await adminModel.deleteMember(userId);
+
+            return res.status(200).json(deletedUser);
+        } catch (e) {
+            next(e);
+        }
+    }
 }
 
 export { AdminController };
