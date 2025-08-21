@@ -5,7 +5,7 @@ import { AdminModel } from "../models/adminModel.js";
 
 const adminModel = new AdminModel();
 class AdminController {
-    // POST /api/auth/admin/create-role
+    // POST /api/admin/create-role
     createRole: Handler = async (req, res, next: NextFunction) => {
         if (!req.body) throw new HttpError(400, "No Body Req");
 
@@ -19,7 +19,7 @@ class AdminController {
         }
     }
 
-    // GET /api/auth/admin/dashboard/users
+    // GET /api/admin/dashboard/users
     getUsers: Handler = async (req, res, next: NextFunction) => {
         try {
             const users = await adminModel.getAllUsers();

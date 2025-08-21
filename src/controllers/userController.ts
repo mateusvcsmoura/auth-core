@@ -5,6 +5,7 @@ import { UserModel } from "../models/userModel.js";
 
 const userModel = new UserModel();
 class UserController {
+    // /api/user/register
     register: Handler = async (req, res, next: NextFunction) => {
         if (!req.body) throw new HttpError(400, "No body req");
 
@@ -20,6 +21,7 @@ class UserController {
         }
     }
 
+    // /api/user/login
     login: Handler = async (req, res, next: NextFunction) => {
         if (!req.body) throw new HttpError(400, "No body req");
 
@@ -33,6 +35,7 @@ class UserController {
         }
     }
 
+    // /api/user/change-password
     changePassword: Handler = async (req, res, next: NextFunction) => {
         if (!req.body) throw new HttpError(400, "No body req");
 
@@ -48,6 +51,7 @@ class UserController {
         }
     }
 
+    // /api/user/delete-account
     deleteAccount: Handler = async (req, res, next: NextFunction) => {
         if (!req.user) throw new HttpError(401, "Authorization required");
 
