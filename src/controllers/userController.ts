@@ -4,6 +4,7 @@ import { changeUserPasswordSchema, loginUserSchema, registerUserSchema } from ".
 import { UserModel } from "../models/userModel.js";
 
 const userModel = new UserModel();
+
 class UserController {
     // /api/user/register
     register: Handler = async (req, res, next: NextFunction) => {
@@ -11,9 +12,7 @@ class UserController {
 
         try {
             const validatedData = registerUserSchema.parse(req.body);
-
             const newUser = await userModel.register(validatedData);
-            if (!newUser) throw new HttpError(500, "Could not create user");
 
             return res.status(201).json(newUser);
         } catch (e) {
@@ -29,7 +28,7 @@ class UserController {
             const validatedData = loginUserSchema.parse(req.body);
             const token = await userModel.login(validatedData);
 
-            return res.status(200).json({ token });
+            return res.status(200).json(token);
         } catch (e) {
             next(e);
         }
@@ -41,9 +40,9 @@ class UserController {
 
         try {
             const validatedData = changeUserPasswordSchema.parse(req.body);
-            const id = req.user?.id as number;
+            const email = req.user?.email as string;
 
-            const updatedUser = await userModel.changePassword({ ...validatedData, id });
+            const updatedUser = await userModel.changePassword({ ...validatedData, email });
 
             return res.status(200).json(updatedUser);
         } catch (e) {

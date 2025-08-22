@@ -12,7 +12,7 @@ export interface UserLogin {
 }
 
 export interface ChangeUserPassword {
-    id: number;
+    email: string;
     oldPassword: string;
     newPassword: string;
 }
@@ -28,5 +28,16 @@ export enum Staff {
     Admin,
     Master
 }
+
+export const publicUserSelect = {
+    id: true,
+    email: true,
+    name: true,
+    createdAt: true,
+    updatedAt: true,
+    roleId: true,
+    role: { select: { id: true, name: true } },
+} as const;
+
 
 export type UserRole = "Standard" | "Admin";
