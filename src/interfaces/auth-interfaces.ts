@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { JwtPayload } from "jsonwebtoken";
 
 export interface UserRegister {
@@ -39,5 +40,6 @@ export const publicUserSelect = {
     role: { select: { id: true, name: true } },
 } as const;
 
-
 export type UserRole = "Standard" | "Admin";
+export type ProtectedRoles = "Standard" | "Admin" | "Master";
+export type PublicUser = Prisma.UsersGetPayload<{ select: typeof publicUserSelect }>;

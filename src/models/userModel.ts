@@ -3,11 +3,9 @@ import { prisma } from "../database/index.js";
 import { ChangeUserPassword, CustomJwtPayload, UserLogin, UserRegister } from "../interfaces/auth-interfaces.js";
 import { HttpError } from '../errors/HttpError.js';
 import { JWT_SECRET } from '../config/index.js';
-import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Prisma } from '@prisma/client';
-
-const normalizeEmail = (email: string) => email.trim().toLowerCase();
+import { compareHash, hash, normalizeEmail } from '../modules/utils.js';
 
 class UserModel {
     private getUserForAuthByEmail = async (rawEmail: string) => { // method to return all user info (including password) for auth
@@ -34,7 +32,7 @@ class UserModel {
                 data: {
                     email: normalizeEmail(user.email),
                     name: user.name,
-                    password: bcrypt.hashSync(user.password, 10),
+                    password: hash(user.password, 10),
                     roleId: 5 // standard user
                 },
                 select: publicUserSelect
@@ -56,7 +54,7 @@ class UserModel {
         const user = await this.getUserForAuthByEmail(userData.email);
         if (!user) throw new HttpError(404, "User not found");
 
-        const passwordMatch = bcrypt.compareSync(userData.password, user.password);
+        const passwordMatch = compareHash(userData.password, user.password);
         if (!passwordMatch) throw new HttpError(401, "Invalid E-mail or Password");
 
         const payload = { id: user.id, email: user.email, name: user.name, role: user.role.name };
@@ -74,11 +72,11 @@ class UserModel {
         const user = await this.getUserForAuthByEmail(userInfo.email);
         if (!user) throw new HttpError(404, "User not found");
 
-        const passwordMatch = bcrypt.compareSync(userInfo.oldPassword, user.password);
+        const passwordMatch = compareHash(userInfo.oldPassword, user.password);
         if (!passwordMatch) throw new HttpError(400, "Incorrect Password");
         if (userInfo.newPassword === userInfo.oldPassword) throw new HttpError(400, "New password must be different from old password");
 
-        const hashedNewPassword = bcrypt.hashSync(userInfo.newPassword, 10);
+        const hashedNewPassword = hash(userInfo.newPassword, 10);
 
         const updatedUser = await prisma.users.update({
             data: { password: hashedNewPassword }, // save hashed password in database

@@ -44,6 +44,20 @@ class AdminController {
         }
     }
 
+    // DELETE /api/admin/delete-role
+    deleteRole: Handler = async (req, res, next: NextFunction) => {
+        if (!req.body) throw new HttpError(400, "No body req");
+
+        try {
+            const roleId = req.body.roleId;
+            const deletedRole = await adminModel.deleteRole(roleId);
+
+            return res.status(200).json(deletedRole);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     // DELETE /api/admin/dashboard/delete-user
     deleteUser: Handler = async (req, res, next: NextFunction) => {
         if (!req.params) throw new HttpError(400, "No req params");

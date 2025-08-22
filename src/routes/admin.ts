@@ -6,6 +6,7 @@ const adminRouter = Router();
 const adminController = new AdminController();
 
 adminRouter.post('/create-role', adminController.createRole);
+adminRouter.delete('/delete-role', middlewares.ensureAuth, middlewares.ensureAdmin, adminController.deleteRole);
 adminRouter.get('/dashboard/users', middlewares.ensureAuth, middlewares.ensureAdmin, adminController.getUsers);
 adminRouter.post('/dashboard/update-user-role', middlewares.ensureAuth, middlewares.ensureMaster, adminController.updateUserRole);
 adminRouter.delete('/dashboard/delete-user/:userId', middlewares.ensureAuth, middlewares.ensureAdmin, adminController.deleteUser);
