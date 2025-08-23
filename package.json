@@ -7,7 +7,19 @@
     "build": "tsc",
     "start": "node build/server.js"
   },
-  "keywords": [],
+  "keywords": [
+    "Auth",
+    "API",
+    "REST",
+    "TypeScript",
+    "Nodejs",
+    "Express",
+    "Prisma",
+    "SQL",
+    "Zod",
+    "Bcrypt",
+    "jsonwebtoken"
+  ],
   "author": "mateusvcsmoura",
   "license": "ISC",
   "description": "API REST to manage auth services",
